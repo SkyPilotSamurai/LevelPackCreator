@@ -12,7 +12,7 @@ window.LEVEL_PACK = {
   "titleBackgroundColor": "#1830a0",
   "titleBorderColor": "#00b8f8",
   "titleAccentColor": "#ffffff",
-  "packName": "LEVEL PACK",
+  "packName": "Level Pack Creator",
   "linkFormat": "megamaker://{id}",
   "titleBackground": "images/TitleScreen.png",
   "selectBackground": "images/LevelSelect",

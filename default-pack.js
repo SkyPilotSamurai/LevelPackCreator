@@ -1,5 +1,5 @@
 window.LEVEL_PACK = {
-  "levelSource": "local",
+  "levelSource": "online",
   "packFontSizePx": 26,
   "levelNameFontSizePx": 20,
   "wilyIcon": "images/default-assets/b68087562c204803123604f49a5b5c1949482d4c0d0907736741e8c0e64d8a4c.png",

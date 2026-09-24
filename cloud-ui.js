@@ -45,6 +45,19 @@
     catch(e){status(box,friendly(e));}
   };
   document.getElementById('browse-cloud-packs').onclick=window.browseCloudPacks;
+  const cleanup=document.createElement('button');cleanup.id='cleanup-old-packs';cleanup.textContent='DELETE OLD PACK VERSIONS';cleanup.style.cssText='position:absolute;bottom:2%;left:50%;transform:translateX(-50%);background:none;border:0;color:#a4e4fc;font:inherit;font-size:10px;cursor:pointer;';document.querySelector('#screen-title .title-inner').append(cleanup);
+  cleanup.onclick=async()=>{
+    const {box}=dialog('DELETE OLD PACK VERSIONS');status(box,'Checking packs…');
+    try{
+      const old=await PackCloud.olderVersions();
+      if(!old.length){status(box,'No older pack versions found.');return;}
+      status(box,'Keep the newest version of each pack name and delete these '+old.length+' older versions:');
+      for(const p of old){const line=document.createElement('p');line.textContent=p.name+' — '+p.slug;box.append(line);}
+      const confirm=document.createElement('button');confirm.className='cloud-pack';confirm.textContent='DELETE '+old.length+' OLD VERSIONS';box.append(confirm);
+      confirm.onclick=async()=>{confirm.disabled=true;let count=0;try{for(const p of old){const current=await PackCloud.olderVersions();if(!current.some(v=>v.slug===p.slug&&v.manifestPath===p.manifestPath))continue;await PackCloud.remove(p.slug);count++;status(box,'Deleted '+count+' of '+old.length+' older versions.');}confirm.remove();status(box,'Finished. Deleted '+count+' older versions.');}catch(e){confirm.disabled=false;status(box,friendly(e));}};
+    }catch(e){status(box,friendly(e));}
+  };
+
   window.saveCloudPack=async()=>{
     if(busy||(window.directPack&&!editMode))return;
     let name=CONFIG.cloudName;if(!name){name=prompt('Pack name for publishing:',CONFIG.packName||'');if(!name?.trim())return;name=name.trim();}

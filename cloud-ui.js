@@ -41,23 +41,21 @@
   window.browseCloudPacks=async()=>{
     if(window.directPack)return;
     const {box}=dialog('LOAD PACK');status(box,'Loading packs…');
-    try{const packs=await PackCloud.list();status(box,packs.length?'Choose a pack.':'No packs published yet.');for(const pack of packs){const button=document.createElement('button');button.className='cloud-pack';button.textContent=pack.name;button.onclick=async()=>{button.disabled=true;status(box,'Loading pack…');try{install(await PackCloud.load(pack.slug));}catch(e){button.disabled=false;status(box,friendly(e));}};const row=document.createElement('div');row.append(button);const remove=document.createElement('button');remove.className='cloud-pack';remove.textContent='DELETE';remove.setAttribute('aria-label','Delete '+pack.name);remove.onclick=async()=>{if(!confirm('Delete "'+pack.name+'"? Its files will be deleted unless another pack uses them. Its shared link will stop working.'))return;remove.disabled=true;button.disabled=true;try{await PackCloud.remove(pack.slug);row.remove();status(box,box.querySelector('.cloud-pack')?'Choose a pack.':'No packs published yet.');}catch(e){remove.disabled=false;button.disabled=false;status(box,friendly(e));}};row.append(remove);box.append(row);}}
+    try{const packs=await PackCloud.list();status(box,packs.length?'Choose a pack.':'No packs published yet.');for(const pack of packs){const button=document.createElement('button');button.className='cloud-pack';button.textContent=pack.name;button.onclick=async()=>{button.disabled=true;status(box,'Loading pack…');try{install(await PackCloud.load(pack.slug));}catch(e){button.disabled=false;status(box,friendly(e));}};const row=document.createElement('div');row.style.position='relative';row.append(button);
+      if(PackCloud.canDelete?.(pack.slug)){
+        button.style.paddingRight='48px';const remove=document.createElement('button');remove.textContent='×';remove.setAttribute('aria-label','Delete '+pack.name);remove.style.cssText='position:absolute;right:8px;top:8px;background:none;border:0;color:white;font-size:24px;cursor:pointer;';
+        remove.onclick=()=>{
+          const confirmation=dialog('DELETE PACK');status(confirmation.box,'Delete "'+pack.name+'" and its unused files?');
+          const yes=document.createElement('button');yes.className='cloud-pack';yes.textContent='DELETE PACK';
+          const cancel=document.createElement('button');cancel.className='cloud-pack';cancel.textContent='CANCEL';cancel.onclick=()=>confirmation.overlay.remove();
+          yes.onclick=async()=>{yes.disabled=true;remove.disabled=true;button.disabled=true;try{await PackCloud.remove(pack.slug);row.remove();confirmation.overlay.remove();status(box,box.querySelector('.cloud-pack')?'Choose a pack.':'No packs published yet.');}catch(e){yes.disabled=false;remove.disabled=false;button.disabled=false;status(confirmation.box,friendly(e));}};
+          confirmation.box.append(yes,cancel);
+        };row.append(remove);
+      }
+      box.append(row);}}
     catch(e){status(box,friendly(e));}
   };
   document.getElementById('browse-cloud-packs').onclick=window.browseCloudPacks;
-  const cleanup=document.createElement('button');cleanup.id='cleanup-old-packs';cleanup.textContent='DELETE OLD PACK VERSIONS';cleanup.style.cssText='position:absolute;bottom:2%;left:50%;transform:translateX(-50%);background:none;border:0;color:#a4e4fc;font:inherit;font-size:10px;cursor:pointer;';document.querySelector('#screen-title .title-inner').append(cleanup);
-  cleanup.onclick=async()=>{
-    const {box}=dialog('DELETE OLD PACK VERSIONS');status(box,'Checking packs…');
-    try{
-      const old=await PackCloud.olderVersions();
-      if(!old.length){status(box,'No older pack versions found.');return;}
-      status(box,'Keep the newest version of each pack name and delete these '+old.length+' older versions:');
-      for(const p of old){const line=document.createElement('p');line.textContent=p.name+' — '+p.slug;box.append(line);}
-      const confirm=document.createElement('button');confirm.className='cloud-pack';confirm.textContent='DELETE '+old.length+' OLD VERSIONS';box.append(confirm);
-      confirm.onclick=async()=>{confirm.disabled=true;let count=0;try{for(const p of old){const current=await PackCloud.olderVersions();if(!current.some(v=>v.slug===p.slug&&v.manifestPath===p.manifestPath))continue;await PackCloud.remove(p.slug);count++;status(box,'Deleted '+count+' of '+old.length+' older versions.');}confirm.remove();status(box,'Finished. Deleted '+count+' older versions.');}catch(e){confirm.disabled=false;status(box,friendly(e));}};
-    }catch(e){status(box,friendly(e));}
-  };
-
   window.saveCloudPack=async()=>{
     if(busy||(window.directPack&&!editMode))return;
     let name=CONFIG.cloudName;if(!name){name=prompt('Pack name for publishing:',CONFIG.packName||'');if(!name?.trim())return;name=name.trim();}

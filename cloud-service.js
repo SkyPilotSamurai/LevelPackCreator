@@ -12,6 +12,8 @@ window.PackCloud = (() => {
     return ready;
   }
   const slugify=name=>name.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,70);
+  function canDelete(slug){try{return JSON.parse(localStorage.getItem('created-level-packs')||'[]').includes(slug);}catch{return false;}}
+  function rememberCreated(slug){try{const own=JSON.parse(localStorage.getItem('created-level-packs')||'[]');localStorage.setItem('created-level-packs',JSON.stringify([...new Set([...own,slug])]));}catch{}}
   async function list(){const s=await sdk();const snap=await s.db.get(s.db.ref(s.database,'levelPackCreator/packs'));return Object.entries(snap.val()||{}).filter(([,p])=>p.manifestPath).map(([slug,p])=>({...p,slug})).sort((a,b)=>b.updatedAt-a.updatedAt);}
   async function load(slug){
     const s=await sdk();const record=(await s.db.get(s.db.ref(s.database,'levelPackCreator/packs/'+slug))).val();
@@ -64,10 +66,12 @@ window.PackCloud = (() => {
     const updatedAt=Date.now();
     const claim=await s.db.runTransaction(s.db.ref(s.database,'levelPackCreator/packs/'+slug),current=>((current?.manifestPath||null)===(previous?.manifestPath||null))?{name,manifestPath,updatedAt}:undefined);
     if(!claim.committed)throw Error('This pack changed while saving. Reload it before saving again.');
+    if(!previous)rememberCreated(slug);
     if(previous){try{await remove(slug,previous);}catch{progress('Pack saved; old files can be cleaned up later.');}}
     return {...result,cloudRevision:updatedAt};
   }
   async function remove(slug,obsolete=null){
+    if(!obsolete&&!canDelete(slug))throw Error('Delete is available only in the browser that created this pack.');
     if(!/^[a-z0-9][a-z0-9-]{0,69}$/.test(slug))throw Error('Invalid pack.');
     const s=await sdk();
     const records=(await s.db.get(s.db.ref(s.database,'levelPackCreator/packs'))).val()||{};
@@ -104,5 +108,5 @@ window.PackCloud = (() => {
     }
     if(!obsolete)await s.db.remove(s.db.ref(s.database,'levelPackCreator/packs/'+slug));
   }
-  return {list,load,publish,slugify,remove,olderVersions};
+  return {list,load,publish,slugify,remove,olderVersions,canDelete};
 })();

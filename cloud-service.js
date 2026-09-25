@@ -71,7 +71,6 @@ window.PackCloud = (() => {
     return {...result,cloudRevision:updatedAt};
   }
   async function remove(slug,obsolete=null){
-    if(!obsolete&&!canDelete(slug))throw Error('Delete is available only in the browser that created this pack.');
     if(!/^[a-z0-9][a-z0-9-]{0,69}$/.test(slug))throw Error('Invalid pack.');
     const s=await sdk();
     const records=(await s.db.get(s.db.ref(s.database,'levelPackCreator/packs'))).val()||{};

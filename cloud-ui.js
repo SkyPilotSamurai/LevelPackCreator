@@ -45,7 +45,7 @@
       {
         button.style.paddingRight='48px';const remove=document.createElement('button');remove.textContent='×';remove.setAttribute('aria-label','Delete '+pack.name);remove.style.cssText='position:absolute;right:8px;top:8px;background:none;border:0;color:white;font-size:24px;cursor:pointer;';
         remove.onclick=()=>{
-          const confirmation=dialog('ARE YOU SURE?');status(confirmation.box,'Delete "'+pack.name+'" and its unused files? This cannot be undone.');
+          const confirmation=dialog('Are you sure you want to delete '+pack.name+'?');
           const yes=document.createElement('button');yes.className='cloud-pack';yes.textContent='DELETE PACK';
           const cancel=document.createElement('button');cancel.className='cloud-pack';cancel.textContent='CANCEL';cancel.onclick=()=>confirmation.overlay.remove();
           yes.onclick=async()=>{yes.disabled=true;remove.disabled=true;button.disabled=true;try{await PackCloud.remove(pack.slug);row.remove();confirmation.overlay.remove();status(box,box.querySelector('.cloud-pack')?'Choose a pack.':'No packs published yet.');}catch(e){yes.disabled=false;remove.disabled=false;button.disabled=false;status(confirmation.box,friendly(e));}};

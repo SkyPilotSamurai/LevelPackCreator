@@ -64,12 +64,10 @@ window.PackCloud = (() => {
     const manifestPath=root+'packs/'+crypto.randomUUID()+'.json';
     progress('Saving pack…');await s.storage.uploadBytes(s.storage.ref(s.bucket,manifestPath),new Blob([JSON.stringify(result)],{type:'application/json'}));
     const updatedAt=Date.now();
-    let replaced=previous;
-    await s.db.runTransaction(s.db.ref(s.database,'levelPackCreator/packs/'+slug),current=>{
-      // Firebase can first invoke this with an empty local cache, then retry with server data.
-      replaced=current||previous;
-      return {name,manifestPath,updatedAt};
-    });
+    const recordRef=s.db.ref(s.database,'levelPackCreator/packs/'+slug);
+    const replaced=(await s.db.get(recordRef)).val();
+    // Publish only after the new manifest is fully uploaded. Last completed save wins.
+    await s.db.set(recordRef,{name,manifestPath,updatedAt});
     if(!previous)rememberCreated(slug);
     if(replaced){try{await remove(slug,replaced);}catch{progress('Pack saved; old files can be cleaned up later.');}}
     return {...result,cloudRevision:updatedAt};

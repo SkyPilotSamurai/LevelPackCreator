@@ -67,7 +67,7 @@
       Object.assign(CONFIG,saved);
       dirty=false;document.body.classList.remove('dirty');status(box,'Pack saved. Share this link:');
       const link=document.createElement('a');link.href=new URL(encodeURIComponent(saved.cloudSlug),'https://skypilotsamurai.github.io/LevelPackCreator/').href;link.textContent=link.href;box.append(link);
-    }catch(e){status(box,friendly(e));}
+    }catch(e){status(box,'Error saving pack');}
     finally{busy=false;const close=document.createElement('button');close.className='cloud-pack';close.textContent='CLOSE';close.onclick=()=>overlay.remove();box.append(close);}
   };
   if(window.directPack){

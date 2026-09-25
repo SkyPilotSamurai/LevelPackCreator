@@ -64,10 +64,14 @@ window.PackCloud = (() => {
     const manifestPath=root+'packs/'+crypto.randomUUID()+'.json';
     progress('Saving pack…');await s.storage.uploadBytes(s.storage.ref(s.bucket,manifestPath),new Blob([JSON.stringify(result)],{type:'application/json'}));
     const updatedAt=Date.now();
-    const claim=await s.db.runTransaction(s.db.ref(s.database,'levelPackCreator/packs/'+slug),current=>((current?.manifestPath||null)===(previous?.manifestPath||null))?{name,manifestPath,updatedAt}:undefined);
-    if(!claim.committed)throw Error('This pack changed while saving. Reload it before saving again.');
+    let replaced=previous;
+    await s.db.runTransaction(s.db.ref(s.database,'levelPackCreator/packs/'+slug),current=>{
+      // Firebase can first invoke this with an empty local cache, then retry with server data.
+      replaced=current||previous;
+      return {name,manifestPath,updatedAt};
+    });
     if(!previous)rememberCreated(slug);
-    if(previous){try{await remove(slug,previous);}catch{progress('Pack saved; old files can be cleaned up later.');}}
+    if(replaced){try{await remove(slug,replaced);}catch{progress('Pack saved; old files can be cleaned up later.');}}
     return {...result,cloudRevision:updatedAt};
   }
   async function remove(slug,obsolete=null){

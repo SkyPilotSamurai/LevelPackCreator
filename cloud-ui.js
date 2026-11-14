@@ -162,7 +162,7 @@
       Object.assign(CONFIG,saved);
       dirty=false;document.body.classList.remove('dirty');status(box,saved.visibility==='private'?'Pack saved as PRIVATE. It is not listed and only you can open it:':'Pack saved and live. Share this link:');
       const link=document.createElement('a');link.href=new URL('packcreator.html?pack='+encodeURIComponent(saved.cloudSlug),document.baseURI).href;link.textContent=link.href;box.append(link);
-    }catch(e){console.error('Pack save failed',{code:e.code||'',message:e.message||'',slug:CONFIG.cloudSlug||'',name});status(box,'Error saving pack');}
+    }catch(e){console.error('Pack save failed',{code:e.code||'',message:e.message||'',slug:CONFIG.cloudSlug||'',name});status(box,'Error saving pack: '+friendly(e));const detail=document.createElement('p');detail.style.cssText='font-size:9px;line-height:1.6;color:#a4e4fc;overflow-wrap:anywhere;';detail.textContent=[e.code||'',e.message||''].filter(Boolean).join(' — ')||'No further detail. See the browser console.';box.append(detail);}
     finally{busy=false;const close=document.createElement('button');close.className='cloud-pack';close.textContent='CLOSE';close.onclick=()=>overlay.remove();box.append(close);}
   };
   if(window.directPack){

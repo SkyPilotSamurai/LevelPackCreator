@@ -2,33 +2,35 @@ window.LEVEL_PACK = {
   "levelSource": "online",
   "packFontSizePx": 26,
   "levelNameFontSizePx": 20,
-  "wilyIcon": "images/default-assets/b68087562c204803123604f49a5b5c1949482d4c0d0907736741e8c0e64d8a4c.png",
+  "wilyIcon": "images/wilyicons/sprFlashPlate1.png",
   "wilyText": "DR. WILY",
   "wilyTitle": "DR. WILY'S FORTRESS",
   "wilyTextColor": "#ffffff",
   "showWilyTitle": true,
   "showTitle": true,
+  "stageSelectText": "STAGE SELECT",
+  "showStageSelectText": true,
   "titleTextColor": "#ffffff",
   "titleBackgroundColor": "#1830a0",
   "titleBorderColor": "#00b8f8",
   "titleAccentColor": "#ffffff",
   "packName": "Level Pack Creator",
   "linkFormat": "megamaker://{id}",
-  "titleBackground": "images/TitleScreen.png",
-  "selectBackground": "images/LevelSelect",
-  "wilyBackground": "images/WilyStages",
-  "stageOffsetY": 10,
+  "titleBackground": "images/title-screens/MM2-TitleScreen.png",
+  "selectBackground": "images/stage-select/MM2-StageSelect.png",
+  "wilyBackground": "images/wily-castles/MM3-WilyCastle.png",
+  "stageOffsetY": -6,
   "stageSpacingX": 80,
-  "stageSpacingY": 90,
+  "stageSpacingY": 96,
   "showTileSquares": true,
   "showLevelNames": true,
   "borderStyle": "MM1",
   "uiSounds": true,
   "music": {
-    "title": "music/TitleScreen.mp3",
-    "select": "music/StageSelect",
-    "wily": "music/WilyStages.mp3",
-    "clear": "music/Epilogue.mp3"
+    "title": "music/MM2-TitleScreen.mp3",
+    "select": "music/MM2-StageSelect.mp3",
+    "wily": "music/MM1-Wily-Castle-II.mp3",
+    "clear": "music/MM2-Epilogue.mp3"
   },
   "showTanks": true,
   "tankLevels": {},
@@ -37,55 +39,69 @@ window.LEVEL_PACK = {
   "weapons": [
     {
       "icon": 1,
-      "levels": []
+      "levels": [],
+      "defaultWeapon": true
     },
     {
       "icon": 2,
-      "levels": []
+      "levels": [],
+      "defaultWeapon": false
     },
     {
       "icon": 3,
-      "levels": []
+      "levels": [],
+      "defaultWeapon": false
     },
     {
       "icon": 4,
-      "levels": []
+      "levels": [],
+      "defaultWeapon": false
     },
     {
       "icon": 5,
-      "levels": []
+      "levels": [],
+      "defaultWeapon": false
     },
     {
       "icon": 6,
-      "levels": []
+      "levels": [],
+      "defaultWeapon": false
     },
     {
       "icon": 7,
-      "levels": []
+      "levels": [],
+      "defaultWeapon": false
     },
     {
       "icon": 8,
-      "levels": []
+      "levels": [],
+      "defaultWeapon": false
     },
     {
       "icon": 9,
-      "levels": []
+      "levels": [],
+      "defaultWeapon": false
     },
     {
       "icon": 10,
-      "levels": []
+      "levels": [],
+      "defaultWeapon": false
     },
     {
       "icon": 11,
-      "levels": []
+      "levels": [],
+      "defaultWeapon": false
     },
     {
       "icon": 12,
-      "levels": []
+      "levels": [],
+      "defaultWeapon": false
     }
   ],
   "victoryBackground": "images/default-assets/8e328a54756cb411bb406abf5d971a135296591c818269cc3d7af87c1ef62cd4.png",
   "victoryCredits": "",
+  "victoryText": "",
+  "showVictoryText": true,
   "levelCount": 8,
   "wilyStageCount": 4,
   "gridSlotsVersion": 1,
@@ -234,5 +250,6 @@ window.LEVEL_PACK = {
       "mugshotNumber": 32,
       "customMugshot": false
     }
-  ]
+  ],
+  "showTankTracker": true
 };
